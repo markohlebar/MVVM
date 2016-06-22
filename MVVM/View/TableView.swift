@@ -21,7 +21,14 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         }
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public override init(frame: CGRect, style:UITableViewStyle) {
+        super.init(frame: frame, style: style)
+        
+        self.delegate = self
+        self.dataSource = self
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         self.delegate = self
