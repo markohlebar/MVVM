@@ -9,14 +9,11 @@
 import Foundation
 import UIKit
 
-public protocol ViewModeling: class {
+public protocol ViewModeling {
     
     func uniqueIdentifier() -> String
     func viewClass() -> AnyClass
 }
-
-public typealias TableViewModel = CollectionViewModel
-public typealias TableSectionViewModel = SectionViewModel
 
 public class ViewModel: ViewModeling {
     
@@ -33,6 +30,7 @@ public class ViewModel: ViewModeling {
     }
 }
 
+public typealias TableViewModel = CollectionViewModel
 public class CollectionViewModel: ViewModel {
     
     public var sections: [SectionViewModel]

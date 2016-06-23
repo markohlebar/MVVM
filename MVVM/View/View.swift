@@ -31,3 +31,24 @@ public extension View {
     
     func updateBindings(viewModel: ViewModeling?) {}
 }
+
+public protocol CollectionViewable: View {
+    
+    var collectionViewModel: CollectionViewModel? { get set }
+}
+
+public extension CollectionViewable {
+    
+    var collectionViewModel: CollectionViewModel? {
+        get {
+            return viewModel as? CollectionViewModel
+        }
+        set {
+            viewModel = newValue
+        }
+    }
+    
+    func cellAt(indexPath: NSIndexPath) -> CellViewModel? {
+        return collectionViewModel?.sections[indexPath.section].cells[indexPath.row]
+    }
+}

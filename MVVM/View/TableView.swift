@@ -13,13 +13,9 @@ public class TableViewCell: UITableViewCell, View {
     public func updateBindings(viewModel: ViewModeling?) {}
 }
 
-public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource, View {
-    
-    var tableViewModel: TableViewModel? {
-        get {
-            return viewModel as? TableViewModel
-        }
-    }
+public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource, CollectionViewable {
+        
+    public var didSelectCell: (TableCellViewModel -> Void)?
     
     public override init(frame: CGRect, style:UITableViewStyle) {
         super.init(frame: frame, style: style)
@@ -35,30 +31,26 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         self.dataSource = self
     }
     
-    public var didSelectRow: (TableCellViewModel -> Void)?
-    
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        guard let tableViewModel = tableViewModel else {
+        guard let tableViewModel = collectionViewModel else {
             return 0
         }
         return tableViewModel.sections.count
     }
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let tableViewModel = tableViewModel else {
+        guard let tableViewModel = collectionViewModel else {
             return 0
         }
         return tableViewModel.sections[section].cells.count
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        guard let tableViewModel = tableViewModel else {
+        guard let tableViewModel = collectionViewModel else {
             return UITableViewCell()
         }
         
-        let sectionViewModel = tableViewModel.sections[indexPath.section]
-        let rows = sectionViewModel.cells
-        let rowViewModel = rows[indexPath.row]
+        let rowViewModel = cellAt(indexPath)!
         
         tableView.registerClass(rowViewModel.viewClass(), forCellReuseIdentifier: (rowViewModel.cellIdentifier))
         
@@ -72,13 +64,12 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
-        guard let tableViewModel = tableViewModel else {
+        guard let tableViewModel = collectionViewModel else {
             return
         }
 
-        if let didSelectRow = didSelectRow {
-            let row = tableViewModel.sections[indexPath.section].cells[indexPath.row]
-            didSelectRow(row as! TableCellViewModel)
+        if let didSelectCell = didSelectCell {
+            didSelectCell(cellAt(indexPath) as! TableCellViewModel)
         }
     }
 }
