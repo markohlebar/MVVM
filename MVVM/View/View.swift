@@ -10,17 +10,17 @@ import Foundation
 
 public protocol View: class {
     
-    var viewModel: ViewModelProtocol? { get set }
-    func updateBindings(viewModel: ViewModelProtocol?)
+    var viewModel: ViewModeling? { get set }
+    func updateBindings(viewModel: ViewModeling?)
 }
 
 private var ViewKey: UInt8 = 0
 public extension View {
     
-    var viewModel: ViewModelProtocol? {
+    var viewModel: ViewModeling? {
         get {
             let associated = objc_getAssociatedObject(self,  &ViewKey)
-            return associated as? ViewModelProtocol
+            return associated as? ViewModeling
         }
         set {
             objc_setAssociatedObject(self, &ViewKey, newValue as! AnyObject,
@@ -29,5 +29,5 @@ public extension View {
         }
     }
     
-    func updateBindings(viewModel: ViewModelProtocol?) {}
+    func updateBindings(viewModel: ViewModeling?) {}
 }

@@ -10,7 +10,7 @@ import UIKit
 
 public class TableViewCell: UITableViewCell, View {
     
-    public func updateBindings(viewModel: ViewModelProtocol?) {}
+    public func updateBindings(viewModel: ViewModeling?) {}
 }
 
 public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource, View {
@@ -35,7 +35,7 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         self.dataSource = self
     }
     
-    public var didSelectRow: (TableRowViewModel -> Void)?
+    public var didSelectRow: (TableCellViewModel -> Void)?
     
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         guard let tableViewModel = tableViewModel else {
@@ -48,7 +48,7 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         guard let tableViewModel = tableViewModel else {
             return 0
         }
-        return tableViewModel.sections[section].rows.count
+        return tableViewModel.sections[section].cells.count
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -57,7 +57,7 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         }
         
         let sectionViewModel = tableViewModel.sections[indexPath.section]
-        let rows = sectionViewModel.rows
+        let rows = sectionViewModel.cells
         let rowViewModel = rows[indexPath.row]
         
         tableView.registerClass(rowViewModel.viewClass(), forCellReuseIdentifier: (rowViewModel.cellIdentifier))
@@ -77,8 +77,8 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         }
 
         if let didSelectRow = didSelectRow {
-            let row = tableViewModel.sections[indexPath.section].rows[indexPath.row]
-            didSelectRow(row)
+            let row = tableViewModel.sections[indexPath.section].cells[indexPath.row]
+            didSelectRow(row as! TableCellViewModel)
         }
     }
 }
