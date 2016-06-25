@@ -8,14 +8,14 @@
 
 import UIKit
 
-public class TableViewCell: UITableViewCell, View {
+public class TableViewCell: UITableViewCell, ViewModelable {
     
     public func updateBindings(viewModel: ViewModeling?) {}
 }
 
-public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource, CollectionViewable {
+public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource, CollectionViewModelable {
         
-    public var didSelectCell: (TableCellViewModel -> Void)?
+    public var didSelectCell: (TableCellViewModeling -> Void)?
     
     public override init(frame: CGRect, style:UITableViewStyle) {
         super.init(frame: frame, style: style)
@@ -52,7 +52,7 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         
         let rowViewModel = cellAt(indexPath)!
         
-        tableView.registerClass(rowViewModel.viewClass(), forCellReuseIdentifier: (rowViewModel.cellIdentifier))
+        tableView.registerClass(rowViewModel.viewClass, forCellReuseIdentifier: (rowViewModel.cellIdentifier))
         
         let cell = tableView.dequeueReusableCellWithIdentifier((rowViewModel.cellIdentifier), forIndexPath: indexPath) as! TableViewCell
         
@@ -69,7 +69,7 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         }
 
         if let didSelectCell = didSelectCell {
-            didSelectCell(cellAt(indexPath) as! TableCellViewModel)
+            didSelectCell(cellAt(indexPath) as! TableCellViewModeling)
         }
     }
 }

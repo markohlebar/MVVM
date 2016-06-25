@@ -8,14 +8,14 @@
 
 import UIKit
 
-public class CollectionViewCell: UICollectionViewCell, View {
+public class CollectionViewCell: UICollectionViewCell, ViewModelable {
     
     public func updateBindings(viewModel: ViewModeling?) {}
 }
 
-public class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewable {
+public class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewModelable {
     
-    public var didSelectCell: (CollectionCellViewModel -> Void)?
+    public var didSelectCell: (CollectionCellViewModeling -> Void)?
     
     public override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
@@ -53,7 +53,7 @@ public class CollectionView: UICollectionView, UICollectionViewDelegate, UIColle
         
         let cellViewModel = cellAt(indexPath)!
         
-        collectionView.registerClass(cellViewModel.viewClass(), forCellWithReuseIdentifier: (cellViewModel.cellIdentifier))
+        collectionView.registerClass(cellViewModel.viewClass, forCellWithReuseIdentifier: (cellViewModel.cellIdentifier))
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellViewModel.cellIdentifier, forIndexPath: indexPath) as! CollectionViewCell
         
@@ -70,7 +70,7 @@ public class CollectionView: UICollectionView, UICollectionViewDelegate, UIColle
         }
         
         if let didSelectCell = didSelectCell {
-            didSelectCell(cellAt(indexPath) as! CollectionCellViewModel)
+            didSelectCell(cellAt(indexPath) as! CollectionCellViewModeling)
         }
     }
 }

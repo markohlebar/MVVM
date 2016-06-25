@@ -11,69 +11,95 @@ import UIKit
 
 public protocol ViewModeling {
     
-    func uniqueIdentifier() -> String
-    func viewClass() -> AnyClass
+    var uniqueIdentifier: String { get }
+    var viewClass: AnyClass { get }
 }
 
-public class ViewModel: ViewModeling {
+public extension ViewModeling {
     
-    public init() {}
-
-    public func viewClass() -> AnyClass {
-        assert(false, "Override viewClass in your ViewModel subclass")
-        return UIView.self
-    }
-    
-    public func uniqueIdentifier() -> String {
+    public var uniqueIdentifier: String {
         assert(false, "Override uniqueIdentifier in your ViewModel subclass")
         return ""
     }
+    
+    public var viewClass: AnyClass {
+        assert(false, "Override viewClass in your ViewModel subclass")
+        return UIView.self
+    }
 }
 
-public typealias TableViewModel = CollectionViewModel
-public class CollectionViewModel: ViewModel {
+public protocol CollectionViewModeling: ViewModeling {
     
-    public var sections: [SectionViewModel]
-    let updater: ViewUpdating
+    var updater: ViewUpdating! { get set }
+    var sections: [SectionViewModeling]! { get set }
+    init(updater: ViewUpdating)
+    init()
+    func load()
+    func refresh()
+}
+
+public typealias TableViewModeling = CollectionViewModeling
+public extension CollectionViewModeling {
     
-    public required init(updater: ViewUpdating) {
+    public init(updater: ViewUpdating) {
+        self.init()
         self.updater = updater
         sections = []
-        super.init()
-        reload()
+        load()
+        refresh()
     }
     
-    public func reload() {
+    func refresh() {
         updater.updateWithViewModel(self)
     }
 }
 
-public class SectionViewModel: ViewModel {
+public protocol SectionViewModeling: ViewModeling {
     
-    public let cells: [CellViewModel]
+    var cells: [CellViewModeling] { get set }
+}
+
+public struct SectionViewModel: SectionViewModeling {
     
-    public required init(cells: [CellViewModel]) {
+    public var cells: [CellViewModeling]
+    
+    public init(cells: [CellViewModeling]) {
         self.cells = cells
     }
 }
 
-public class CellViewModel: ViewModel {
+public protocol CellViewModeling: ViewModeling {
     
-    lazy var cellIdentifier: String = {
-        return NSStringFromClass(self.viewClass())
-    }()
+    var cellIdentifier: String { get }
 }
 
-public class CollectionCellViewModel: CellViewModel {
+public extension CellViewModeling {
     
-    public func cellSize() -> CGSize {
+    var cellIdentifier: String {
+        return NSStringFromClass(self.viewClass)
+    }
+}
+
+public protocol CollectionCellViewModeling: CellViewModeling {
+    
+    var cellSize: CGSize { get }
+}
+
+public extension CollectionCellViewModeling {
+    
+    public var cellSize: CGSize {
         return CGSizeMake(44, 44)
     }
 }
 
-public class TableCellViewModel: CellViewModel {
+public protocol TableCellViewModeling: CellViewModeling {
     
-    public func cellHeight() -> CGFloat {
+    var cellHeight: CGFloat { get }
+}
+
+public extension TableCellViewModeling {
+    
+    public var cellHeight: CGFloat {
         return 44
     }
 }
