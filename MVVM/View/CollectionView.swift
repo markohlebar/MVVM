@@ -8,16 +8,11 @@
 
 import UIKit
 
-public class CollectionViewCell: UICollectionViewCell, ViewModelable {
-    
-    public func updateBindings(viewModel: ViewModeling?) {}
-}
-
 public class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewModelable {
     
     public var didSelectCell: (CollectionCellViewModeling -> Void)?
     
-    public override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+    public override init(frame frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         
         self.delegate = self
@@ -46,26 +41,25 @@ public class CollectionView: UICollectionView, UICollectionViewDelegate, UIColle
     }
     
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
         guard let collectionViewModel = collectionViewModel else {
-            return CollectionViewCell()
+            return UICollectionViewCell()
         }
         
         let cellViewModel = cellAt(indexPath)!
         
         collectionView.registerClass(cellViewModel.viewClass, forCellWithReuseIdentifier: (cellViewModel.cellIdentifier))
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellViewModel.cellIdentifier, forIndexPath: indexPath) as! CollectionViewCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellViewModel.cellIdentifier, forIndexPath: indexPath) as! ViewModelable
         
         cell.viewModel = cellViewModel
                 
-        return cell
+        return cell as! UICollectionViewCell
     }
     
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         collectionView.deselectItemAtIndexPath(indexPath, animated: true)
         
-        guard let collectionViewModel = collectionViewModel else {
+        guard collectionViewModel != nil else {
             return
         }
         

@@ -8,11 +8,6 @@
 
 import UIKit
 
-public class TableViewCell: UITableViewCell, ViewModelable {
-    
-    public func updateBindings(viewModel: ViewModeling?) {}
-}
-
 public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource, CollectionViewModelable {
         
     public var didSelectCell: (TableCellViewModeling -> Void)?
@@ -54,17 +49,17 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         
         tableView.registerClass(rowViewModel.viewClass, forCellReuseIdentifier: (rowViewModel.cellIdentifier))
         
-        let cell = tableView.dequeueReusableCellWithIdentifier((rowViewModel.cellIdentifier), forIndexPath: indexPath) as! TableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier((rowViewModel.cellIdentifier), forIndexPath: indexPath) as! ViewModelable
         
         cell.viewModel = rowViewModel
         
-        return cell
+        return cell as! UITableViewCell
     }
     
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
-        guard let tableViewModel = collectionViewModel else {
+        guard collectionViewModel != nil  else {
             return
         }
 
