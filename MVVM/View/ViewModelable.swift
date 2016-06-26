@@ -41,10 +41,9 @@ private func getAssociatedObject(object: AnyObject, associativeKey: UnsafePointe
     }
 }
 
-public protocol ViewModelable: class {
-    
+public protocol ViewModelable: class {    
     var viewModel: ViewModeling? { get set }
-    func updateBindings(viewModel: ViewModeling?)
+    func updateBindings(viewModel: ViewModeling)
 }
 
 private var ViewKey: UInt8 = 0
@@ -57,11 +56,16 @@ public extension ViewModelable {
         }
         set {
             setAssociatedObject(self, value: newValue, associativeKey: &ViewKey, policy: .OBJC_ASSOCIATION_RETAIN)
-            updateBindings(newValue)
+            
+            if let viewModel = newValue {
+                updateBindings(viewModel)
+            }
         }
     }
     
-    func updateBindings(viewModel: ViewModeling?) {}
+    public func updateBindings(viewModel: ViewModeling) {
+    
+    }
 }
 
 public protocol CollectionViewModelable: ViewModelable {
@@ -84,3 +88,21 @@ public extension CollectionViewModelable {
         return collectionViewModel?.sections[indexPath.section].cells[indexPath.row]
     }
 }
+
+public protocol CellViewModelable: ViewModelable {
+    
+    var cellViewModel: CellViewModeling? { get set }
+}
+
+public extension CellViewModelable {
+    
+    var cellViewModel: CellViewModeling? {
+        get {
+            return viewModel as? CellViewModeling
+        }
+        set {
+            viewModel = newValue
+        }
+    }
+}
+
