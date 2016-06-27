@@ -18,18 +18,19 @@ public protocol Reloadable {
     func reloadData() -> Void
 }
 
-extension TableView: Reloadable {}
+extension UITableView: Reloadable {}
+extension UICollectionView: Reloadable {}
 
 /// Convenience handler to reload the Reloadable view on every change.
-public struct Reloader: ViewUpdating {
+public class Reloader: ViewUpdating {
     
-    let reloadable: Reloadable
+    public var reloadable: Reloadable?
     
-    public init(reloadable: Reloadable) {
+    public init(reloadable: Reloadable?) {
         self.reloadable = reloadable
     }
     
     public func updateWithViewModel(viewModel: ViewModeling) {
-        reloadable.reloadData()
+        reloadable?.reloadData()
     }
 }

@@ -57,14 +57,12 @@ public class CollectionView: UICollectionView, UICollectionViewDelegate, UIColle
     }
     
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        collectionView.deselectItemAtIndexPath(indexPath, animated: true)
-        
         guard collectionViewModel != nil else {
             return
         }
         
-        if let didSelectCell = didSelectCell {
-            didSelectCell(cellAt(indexPath) as! CollectionCellViewModeling)
+        if collectionViewModel!.didSelectCell(cellAt(indexPath) as! TableCellViewModeling) {
+            collectionView.deselectItemAtIndexPath(indexPath, animated: true)
         }
     }
 }

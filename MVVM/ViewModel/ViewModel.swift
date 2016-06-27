@@ -36,6 +36,15 @@ public protocol CollectionViewModeling: ViewModeling {
     init()
     func load()
     func refresh()
+    
+    /**
+     Invoked when a cell is tapped.
+     
+     - parameter cell: a cell view model for the cell that was selected.
+     
+     - returns: should it deselect animated?
+     */
+    func didSelectCell(cell: CellViewModeling) -> Bool
 }
 
 public typealias TableViewModeling = CollectionViewModeling
@@ -51,6 +60,10 @@ public extension CollectionViewModeling {
     
     func refresh() {
         updater.updateWithViewModel(self)
+    }
+    
+    func didSelectCell(cell: CellViewModeling) -> Bool {
+        return true
     }
 }
 

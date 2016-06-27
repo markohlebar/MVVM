@@ -57,14 +57,12 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
     }
     
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        
         guard collectionViewModel != nil  else {
             return
         }
 
-        if let didSelectCell = didSelectCell {
-            didSelectCell(cellAt(indexPath) as! TableCellViewModeling)
+        if collectionViewModel!.didSelectCell(cellAt(indexPath) as! TableCellViewModeling) {
+            tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
     }
 }
