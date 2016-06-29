@@ -47,7 +47,16 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         
         let rowViewModel = cellAt(indexPath)!
         
-        tableView.registerClass(rowViewModel.viewClass, forCellReuseIdentifier: (rowViewModel.cellIdentifier))
+        if let nibName = rowViewModel.nibName {
+            let nib = UINib.init(nibName: nibName, bundle: NSBundle.mainBundle())
+            tableView.registerNib(nib, forCellReuseIdentifier:rowViewModel.cellIdentifier)
+        }
+        else if let viewClass = rowViewModel.viewClass {
+            tableView.registerClass(viewClass, forCellReuseIdentifier:rowViewModel.cellIdentifier)
+        }
+        else {
+            //TODO: throw exception with MVVM domain
+        }
         
         let cell = tableView.dequeueReusableCellWithIdentifier((rowViewModel.cellIdentifier), forIndexPath: indexPath) as! ViewModelable
         
@@ -64,5 +73,10 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
         if collectionViewModel!.didSelectCell(cellAt(indexPath) as! TableCellViewModeling) {
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
+    }
+    
+    public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        let rowViewModel = cellAt(indexPath) as! TableCellViewModeling
+        return rowViewModel.cellHeight
     }
 }

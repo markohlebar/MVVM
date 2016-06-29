@@ -12,7 +12,8 @@ import UIKit
 public protocol ViewModeling {
     
     var uniqueIdentifier: String { get }
-    var viewClass: AnyClass { get }
+    var viewClass: AnyClass? { get }
+    var nibName: String? { get }
     var refreshHandler: (ViewModeling -> Void)? {get set}
     func refresh()
 }
@@ -20,13 +21,17 @@ public protocol ViewModeling {
 public extension ViewModeling {
     
     public var uniqueIdentifier: String {
+        //TODO: Throw exception rather than assert? 
         assert(false, "Override uniqueIdentifier in your ViewModel subclass")
         return ""
     }
     
-    public var viewClass: AnyClass {
-        assert(false, "Override viewClass in your ViewModel subclass")
-        return UIView.self
+    public var viewClass: AnyClass? {
+        return nil
+    }
+    
+    public var nibName: String? {
+        return nil
     }
     
     public func refresh() {
@@ -78,7 +83,15 @@ public protocol CellViewModeling: ViewModeling {
 public extension CellViewModeling {
     
     var cellIdentifier: String {
-        return NSStringFromClass(self.viewClass)
+        if let nibName = self.nibName {
+            return nibName
+        }
+        else if let viewClass = self.viewClass {
+            return NSStringFromClass(viewClass)
+        }
+        
+        //TODO: Throw exception here?
+        return ""
     }
 }
 
