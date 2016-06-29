@@ -13,6 +13,8 @@ public protocol ViewModeling {
     
     var uniqueIdentifier: String { get }
     var viewClass: AnyClass { get }
+    var refreshHandler: (ViewModeling -> Void)? {get set}
+    func refresh()
 }
 
 public extension ViewModeling {
@@ -26,16 +28,15 @@ public extension ViewModeling {
         assert(false, "Override viewClass in your ViewModel subclass")
         return UIView.self
     }
+    
+    public func refresh() {
+        refreshHandler!(self)
+    }
 }
 
 public protocol CollectionViewModeling: ViewModeling {
     
-    var updater: ViewUpdating! { get set }
     var sections: [SectionViewModeling]! { get set }
-    init(updater: ViewUpdating)
-    init()
-    func load()
-    func refresh()
     
     /**
      Invoked when a cell is tapped.
@@ -50,18 +51,6 @@ public protocol CollectionViewModeling: ViewModeling {
 public typealias TableViewModeling = CollectionViewModeling
 public extension CollectionViewModeling {
     
-    public init(updater: ViewUpdating) {
-        self.init()
-        self.updater = updater
-        sections = []
-        load()
-        refresh()
-    }
-    
-    func refresh() {
-        updater.updateWithViewModel(self)
-    }
-    
     func didSelectCell(cell: CellViewModeling) -> Bool {
         return true
     }
@@ -73,7 +62,7 @@ public protocol SectionViewModeling: ViewModeling {
 }
 
 public struct SectionViewModel: SectionViewModeling {
-    
+    public var refreshHandler: (ViewModeling -> Void)?
     public var cells: [CellViewModeling]
     
     public init(cells: [CellViewModeling]) {
