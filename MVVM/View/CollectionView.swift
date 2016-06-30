@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewModelable {
+public class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, CollectionViewModelable {
     
     public var didSelectCell: (CollectionCellViewModeling -> Void)?
     
@@ -57,12 +57,19 @@ public class CollectionView: UICollectionView, UICollectionViewDelegate, UIColle
     }
     
     public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        guard collectionViewModel != nil else {
+        guard let collectionViewModel = collectionViewModel else {
             return
         }
         
-        if collectionViewModel!.didSelectCell(cellAt(indexPath) as! TableCellViewModeling) {
+        if collectionViewModel.didSelectCell(cellAt(indexPath) as!CollectionCellViewModeling) {
             collectionView.deselectItemAtIndexPath(indexPath, animated: true)
         }
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView,
+                          layout collectionViewLayout: UICollectionViewLayout,
+                                 sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        let cell = cellAt(indexPath) as! CollectionCellViewModeling
+        return cell.cellSize
     }
 }
