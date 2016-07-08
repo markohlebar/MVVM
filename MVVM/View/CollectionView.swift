@@ -9,9 +9,7 @@
 import UIKit
 
 public class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, CollectionViewModelable {
-    
-    public var didSelectCell: (CollectionCellViewModeling -> Void)?
-    
+        
     public override init(frame frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         
@@ -71,5 +69,9 @@ public class CollectionView: UICollectionView, UICollectionViewDelegate, UIColle
                                  sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let cell = cellAt(indexPath) as! CollectionCellViewModeling
         return cell.cellSize
+    }
+    
+    public func scrollToIndexPath(indexPath: NSIndexPath) {
+        self.scrollToItemAtIndexPath(indexPath, atScrollPosition:.Top, animated:true)        
     }
 }

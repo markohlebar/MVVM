@@ -15,6 +15,7 @@ public protocol ViewModeling {
     var viewClass: AnyClass? { get }
     var nibName: String? { get }
     var refreshHandler: (ViewModeling -> Void)? {get set}
+    weak var viewModelable: ViewModelable? {get set}
     func refresh()
 }
 
@@ -30,6 +31,7 @@ public extension ViewModeling {
         return nil
     }
     
+    //TODO: this makes it hard to debug if the client implements non optional var nibName
     public var nibName: String? {
         return nil
     }
@@ -51,6 +53,22 @@ public protocol CollectionViewModeling: ViewModeling {
      - returns: should it deselect animated?
      */
     func didSelectCell(cell: CellViewModeling) -> Bool
+    
+    /**
+     Invoked when a cell is deleted.
+     
+     - parameter cell: a cell view model for the cell that was deleted.
+     */
+    func didDeleteCell(cell: CellViewModeling)
+    
+    /**
+     Invoked when a cell is asked to be edited.
+     
+     - parameter cell:  cell view model for the cell that needs to be edited.
+     
+     - returns: can it be edited?
+     */
+    func canEditCell(cell: CellViewModeling) -> Bool
 }
 
 public typealias TableViewModeling = CollectionViewModeling
@@ -58,6 +76,12 @@ public extension CollectionViewModeling {
     
     func didSelectCell(cell: CellViewModeling) -> Bool {
         return true
+    }
+    
+    func didDeleteCell(cell: CellViewModeling) {}
+    
+    func canEditCell(cell: CellViewModeling) -> Bool {
+        return false
     }
 }
 
@@ -69,6 +93,7 @@ public protocol SectionViewModeling: ViewModeling {
 public struct SectionViewModel: SectionViewModeling {
     public var refreshHandler: (ViewModeling -> Void)?
     public var cells: [CellViewModeling]
+    public weak var viewModelable: ViewModelable?
     
     public init(cells: [CellViewModeling]) {
         self.cells = cells

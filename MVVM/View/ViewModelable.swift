@@ -26,10 +26,12 @@ public extension ViewModelable {
         }
         set {
             setAssociatedObject(self, value: newValue, associativeKey: &ViewModelKey, policy: .OBJC_ASSOCIATION_RETAIN)
-            
+        
             if var viewModel = newValue {
-                updateBindings(viewModel)
+                viewModel.viewModelable = self
                 
+                updateBindings(viewModel)
+            
                 if let updater = updater {
                     viewModel.refreshHandler = updater.updateWithViewModel
                 }
@@ -58,6 +60,13 @@ public extension ViewModelable {
 public protocol CollectionViewModelable: ViewModelable {
     
     var collectionViewModel: CollectionViewModeling? { get set }
+    
+    /**
+     Implement this behaviour to be able to scroll to cell.
+     
+     - parameter indexPath: an indexPath to scroll to.
+     */
+    func scrollToIndexPath(indexPath: NSIndexPath);
 }
 
 public extension CollectionViewModelable {

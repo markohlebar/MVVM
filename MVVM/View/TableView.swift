@@ -9,9 +9,7 @@
 import UIKit
 
 public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource, CollectionViewModelable {
-        
-    public var didSelectCell: (TableCellViewModeling -> Void)?
-    
+            
     public override init(frame: CGRect, style:UITableViewStyle) {
         super.init(frame: frame, style: style)
         
@@ -58,19 +56,23 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
             //TODO: throw exception with MVVM domain
         }
         
-        let cell = tableView.dequeueReusableCellWithIdentifier((rowViewModel.cellIdentifier), forIndexPath: indexPath) as! ViewModelable
+        if let cell = tableView.dequeueReusableCellWithIdentifier((rowViewModel.cellIdentifier), forIndexPath: indexPath) as? ViewModelable {
+            cell.viewModel = rowViewModel
+            return cell as! UITableViewCell
+        }
+        else {
+            assert(false, "The cell is not view modelable; Make sure the cell imlpements ViewModelable protocol.")
+        }
         
-        cell.viewModel = rowViewModel
-        
-        return cell as! UITableViewCell
+        return UITableViewCell()
     }
     
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        guard collectionViewModel != nil  else {
+        guard let collectionViewModel = collectionViewModel else {
             return
         }
 
-        if collectionViewModel!.didSelectCell(cellAt(indexPath) as! TableCellViewModeling) {
+        if collectionViewModel.didSelectCell(cellAt(indexPath) as! TableCellViewModeling) {
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
     }
@@ -78,5 +80,31 @@ public class TableView: UITableView, UITableViewDelegate, UITableViewDataSource,
     public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         let rowViewModel = cellAt(indexPath) as! TableCellViewModeling
         return rowViewModel.cellHeight
+    }
+    
+    public func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        guard let collectionViewModel = collectionViewModel else {
+            return false
+        }
+        
+        return collectionViewModel.canEditCell(cellAt(indexPath) as! TableCellViewModeling)
+    }
+    
+    public func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        guard let collectionViewModel = collectionViewModel else {
+            return
+        }
+        
+        switch editingStyle {
+            case .Delete:
+                collectionViewModel.didDeleteCell(cellAt(indexPath) as! TableCellViewModeling)
+            case .Insert: break
+
+            default: break
+        }
+    }
+    
+    public func scrollToIndexPath(indexPath: NSIndexPath) {
+        self.scrollToRowAtIndexPath(indexPath, atScrollPosition:.Top, animated:true)
     }
 }
