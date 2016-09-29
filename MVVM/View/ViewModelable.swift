@@ -11,7 +11,7 @@ import Foundation
 public protocol ViewModelable: class {
     var viewModel: ViewModeling? { get set }
     var updater: ViewUpdating? { get set }
-    func updateBindings(viewModel: ViewModeling)
+    func updateBindings(_ viewModel: ViewModeling)
 }
 
 private var ViewModelKey: UInt8 = 0
@@ -54,7 +54,7 @@ public extension ViewModelable {
         }
     }
     
-    public func updateBindings(viewModel: ViewModeling) {}
+    public func updateBindings(_ viewModel: ViewModeling) {}
 }
 
 public protocol CollectionViewModelable: ViewModelable {
@@ -66,7 +66,7 @@ public protocol CollectionViewModelable: ViewModelable {
      
      - parameter indexPath: an indexPath to scroll to.
      */
-    func scrollToIndexPath(indexPath: NSIndexPath);
+    func scrollToIndexPath(_ indexPath: IndexPath);
 }
 
 public extension CollectionViewModelable {
@@ -80,8 +80,8 @@ public extension CollectionViewModelable {
         }
     }
     
-    func cellAt(indexPath: NSIndexPath) -> CellViewModeling? {
-        return collectionViewModel?.sections[indexPath.section].cells[indexPath.row]
+    func cellAt(_ indexPath: IndexPath) -> CellViewModeling? {
+        return collectionViewModel?.sections[(indexPath as NSIndexPath).section].cells[(indexPath as NSIndexPath).row]
     }
 }
 
@@ -112,11 +112,11 @@ final class Lifted<T> {
     }
 }
 
-private func lift<T>(x: T) -> Lifted<T>  {
+private func lift<T>(_ x: T) -> Lifted<T>  {
     return Lifted(x)
 }
 
-private func setAssociatedObject<T>(object: AnyObject, value: T, associativeKey: UnsafePointer<Void>, policy: objc_AssociationPolicy) {
+private func setAssociatedObject<T>(_ object: AnyObject, value: T, associativeKey: UnsafeRawPointer, policy: objc_AssociationPolicy) {
     if let v: AnyObject = value as? AnyObject {
         objc_setAssociatedObject(object, associativeKey, v,  policy)
     }
@@ -125,7 +125,7 @@ private func setAssociatedObject<T>(object: AnyObject, value: T, associativeKey:
     }
 }
 
-private func getAssociatedObject<T>(object: AnyObject, associativeKey: UnsafePointer<Void>) -> T? {
+private func getAssociatedObject<T>(_ object: AnyObject, associativeKey: UnsafeRawPointer) -> T? {
     if let v = objc_getAssociatedObject(object, associativeKey) as? T {
         return v
     }

@@ -14,7 +14,7 @@ public protocol ViewModeling {
     var uniqueIdentifier: String { get }
     var viewClass: AnyClass? { get }
     var nibName: String? { get }
-    var refreshHandler: (ViewModeling -> Void)? {get set}
+    var refreshHandler: ((ViewModeling) -> Void)? {get set}
     weak var viewModelable: ViewModelable? {get set}
     func refresh()
 }
@@ -52,14 +52,14 @@ public protocol CollectionViewModeling: ViewModeling {
      
      - returns: should it deselect animated?
      */
-    func didSelectCell(cell: CellViewModeling) -> Bool
+    func didSelectCell(_ cell: CellViewModeling) -> Bool
     
     /**
      Invoked when a cell is deleted.
      
      - parameter cell: a cell view model for the cell that was deleted.
      */
-    func didDeleteCell(cell: CellViewModeling)
+    func didDeleteCell(_ cell: CellViewModeling)
     
     /**
      Invoked when a cell is asked to be edited.
@@ -68,19 +68,19 @@ public protocol CollectionViewModeling: ViewModeling {
      
      - returns: can it be edited?
      */
-    func canEditCell(cell: CellViewModeling) -> Bool
+    func canEditCell(_ cell: CellViewModeling) -> Bool
 }
 
 public typealias TableViewModeling = CollectionViewModeling
 public extension CollectionViewModeling {
     
-    func didSelectCell(cell: CellViewModeling) -> Bool {
+    func didSelectCell(_ cell: CellViewModeling) -> Bool {
         return true
     }
     
-    func didDeleteCell(cell: CellViewModeling) {}
+    func didDeleteCell(_ cell: CellViewModeling) {}
     
-    func canEditCell(cell: CellViewModeling) -> Bool {
+    func canEditCell(_ cell: CellViewModeling) -> Bool {
         return false
     }
 }
@@ -91,7 +91,7 @@ public protocol SectionViewModeling: ViewModeling {
 }
 
 public struct SectionViewModel: SectionViewModeling {
-    public var refreshHandler: (ViewModeling -> Void)?
+    public var refreshHandler: ((ViewModeling) -> Void)?
     public var cells: [CellViewModeling]
     public weak var viewModelable: ViewModelable?
     
@@ -128,7 +128,7 @@ public protocol CollectionCellViewModeling: CellViewModeling {
 public extension CollectionCellViewModeling {
     
     public var cellSize: CGSize {
-        return CGSizeMake(44, 44)
+        return CGSize(width: 44, height: 44)
     }
 }
 

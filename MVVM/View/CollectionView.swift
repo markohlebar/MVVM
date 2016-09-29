@@ -8,9 +8,9 @@
 
 import UIKit
 
-public class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, CollectionViewModelable {
+open class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, CollectionViewModelable {
         
-    public override init(frame frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+    public override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         
         self.delegate = self
@@ -24,54 +24,54 @@ public class CollectionView: UICollectionView, UICollectionViewDelegate, UIColle
         self.dataSource = self
     }
     
-    public func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    open func numberOfSections(in collectionView: UICollectionView) -> Int {
         guard let collectionViewModel = collectionViewModel else {
             return 0
         }
         return collectionViewModel.sections.count
     }
     
-    public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let collectionViewModel = collectionViewModel else {
             return 0
         }
         return collectionViewModel.sections[section].cells.count
     }
     
-    public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        guard let collectionViewModel = collectionViewModel else {
+    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard collectionViewModel != nil else {
             return UICollectionViewCell()
         }
         
         let cellViewModel = cellAt(indexPath)!
         
-        collectionView.registerClass(cellViewModel.viewClass, forCellWithReuseIdentifier: (cellViewModel.cellIdentifier))
+        collectionView.register(cellViewModel.viewClass, forCellWithReuseIdentifier: (cellViewModel.cellIdentifier))
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellViewModel.cellIdentifier, forIndexPath: indexPath) as! ViewModelable
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellViewModel.cellIdentifier, for: indexPath) as! ViewModelable
         
         cell.viewModel = cellViewModel
                 
         return cell as! UICollectionViewCell
     }
     
-    public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let collectionViewModel = collectionViewModel else {
             return
         }
         
         if collectionViewModel.didSelectCell(cellAt(indexPath) as!CollectionCellViewModeling) {
-            collectionView.deselectItemAtIndexPath(indexPath, animated: true)
+            collectionView.deselectItem(at: indexPath, animated: true)
         }
     }
     
-    public func collectionView(_ collectionView: UICollectionView,
+    open func collectionView(_ collectionView: UICollectionView,
                           layout collectionViewLayout: UICollectionViewLayout,
-                                 sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+                                 sizeForItemAt indexPath: IndexPath) -> CGSize {
         let cell = cellAt(indexPath) as! CollectionCellViewModeling
         return cell.cellSize
     }
     
-    public func scrollToIndexPath(indexPath: NSIndexPath) {
-        self.scrollToItemAtIndexPath(indexPath, atScrollPosition:.Top, animated:true)        
+    open func scrollToIndexPath(_ indexPath: IndexPath) {
+        self.scrollToItem(at: indexPath, at:.top, animated:true)        
     }
 }

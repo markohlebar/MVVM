@@ -6,11 +6,11 @@
 //  Copyright © 2016 Marko Hlebar. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public protocol ViewUpdating {
     
-    func updateWithViewModel(viewModel: ViewModeling)
+    func updateWithViewModel(_ viewModel: ViewModeling)
 }
 
 public protocol Reloadable {
@@ -22,15 +22,15 @@ extension UITableView: Reloadable {}
 extension UICollectionView: Reloadable {}
 
 /// Convenience handler to reload the Reloadable view on every change.
-public class Reloader: ViewUpdating {
+open class Reloader: ViewUpdating {
     
-    public var reloadable: Reloadable?
+    open var reloadable: Reloadable?
     
     public init(reloadable: Reloadable?) {
         self.reloadable = reloadable
     }
     
-    public func updateWithViewModel(viewModel: ViewModeling) {
+    open func updateWithViewModel(_ viewModel: ViewModeling) {
         reloadable?.reloadData()
     }
 }
