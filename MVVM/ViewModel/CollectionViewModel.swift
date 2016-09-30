@@ -13,13 +13,13 @@ open class CollectionViewModel: NSObject, ItemsViewModeling {
     public weak var viewModelable: ViewModelable?
     public var sections: [SectionViewModeling]!
     
-    open func didSelectCell(_ cell: CellViewModeling) -> Bool {
+    open func didSelect(cell cell: CellViewModeling) -> Bool {
         return true
     }
     
-    open func didDeleteCell(_ cell: CellViewModeling) {}
+    open func didDelete(cell cell: CellViewModeling) {}
     
-    open func canEditCell(_ cell: CellViewModeling) -> Bool {
+    open func canEdit(cell cell: CellViewModeling) -> Bool {
         return false
     }
 }
@@ -50,7 +50,7 @@ extension CollectionViewModel: UICollectionViewDataSource {
 extension CollectionViewModel: UICollectionViewDelegate {
     
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if self.didSelectCell(cellAt(indexPath: indexPath) as! CollectionCellViewModeling) {
+        if self.didSelect(cell: cellAt(indexPath: indexPath) as! CollectionCellViewModeling) {
             collectionView.deselectItem(at: indexPath, animated: true)
         }
     }

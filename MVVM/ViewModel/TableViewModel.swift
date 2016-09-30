@@ -17,13 +17,13 @@ open class TableViewModel: NSObject, ItemsViewModeling {
     weak public var viewModelable: ViewModelable?
     public var sections: [SectionViewModeling]! = []
     
-    open func didSelectCell(_ cell: CellViewModeling) -> Bool {
+    open func didSelect(cell cell: CellViewModeling) -> Bool {
         return true
     }
     
-    open func didDeleteCell(_ cell: CellViewModeling) {}
+    open func didDelete(cell cell: CellViewModeling) {}
     
-    open func canEditCell(_ cell: CellViewModeling) -> Bool {
+    open func canEdit(cell cell: CellViewModeling) -> Bool {
         return false
     }
 }
@@ -65,7 +65,7 @@ extension TableViewModel: UITableViewDataSource {
 
 extension TableViewModel: UITableViewDelegate {
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if self.didSelectCell(cellAt(indexPath: indexPath) as! TableCellViewModeling) {
+        if self.didSelect(cell: cellAt(indexPath: indexPath) as! TableCellViewModeling) {
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
@@ -76,13 +76,13 @@ extension TableViewModel: UITableViewDelegate {
     }
     
     @objc(tableView:canEditRowAtIndexPath:) open func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return self.canEditCell(cellAt(indexPath: indexPath) as! TableCellViewModeling)
+        return self.canEdit(cell: cellAt(indexPath: indexPath) as! TableCellViewModeling)
     }
     
     @objc(tableView:commitEditingStyle:forRowAtIndexPath:) open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
         case .delete:
-            self.didDeleteCell(cellAt(indexPath: indexPath) as! TableCellViewModeling)
+            self.didDelete(cell: cellAt(indexPath: indexPath) as! TableCellViewModeling)
         case .insert: break
             
         default: break

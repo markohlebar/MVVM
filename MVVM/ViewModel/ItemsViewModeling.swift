@@ -20,14 +20,14 @@ public protocol ItemsViewModeling: ViewModeling {
      
      - returns: should it deselect animated?
      */
-    func didSelectCell(_ cell: CellViewModeling) -> Bool
+    func didSelect(cell cell: CellViewModeling) -> Bool
     
     /**
      Invoked when a cell is deleted.
      
      - parameter cell: a cell view model for the cell that was deleted.
      */
-    func didDeleteCell(_ cell: CellViewModeling)
+    func didDelete(cell cell: CellViewModeling)
     
     /**
      Invoked when a cell is asked to be edited.
@@ -36,7 +36,7 @@ public protocol ItemsViewModeling: ViewModeling {
      
      - returns: can it be edited?
      */
-    func canEditCell(_ cell: CellViewModeling) -> Bool
+    func canEdit(cell cell: CellViewModeling) -> Bool
     
     
     func cellAt(indexPath indexPath: IndexPath) -> CellViewModeling?
