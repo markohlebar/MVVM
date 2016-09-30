@@ -13,10 +13,6 @@ open class TableView: UITableView, ItemsViewModelable {
     public var viewModel: ViewModeling?
     public var updater: ViewUpdating?
     
-    open func scrollTo(indexPath indexPath: IndexPath) {
-        self.scrollToRow(at: indexPath, at:.top, animated:true)
-    }
-    
     public func willRefresh(with viewModel: ViewModeling) {
         if let tableViewModel = viewModel as? TableViewModel {
             self.delegate = tableViewModel
@@ -25,5 +21,9 @@ open class TableView: UITableView, ItemsViewModelable {
         else {
             assert(false, "Can't assign a view model that is not a TableViewModel")
         }
+    }
+    
+    open func scrollTo(indexPath indexPath: IndexPath) {
+        self.scrollToRow(at: indexPath, at:.top, animated:true)
     }
 }

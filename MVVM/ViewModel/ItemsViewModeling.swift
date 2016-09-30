@@ -39,12 +39,12 @@ public protocol ItemsViewModeling: ViewModeling {
     func canEditCell(_ cell: CellViewModeling) -> Bool
     
     
-    func cellAt(_ indexPath: IndexPath) -> CellViewModeling?
+    func cellAt(indexPath indexPath: IndexPath) -> CellViewModeling?
 }
 
 public extension ItemsViewModeling {
     
-    func cellAt(_ indexPath: IndexPath) -> CellViewModeling? {
+    func cellAt(indexPath indexPath: IndexPath) -> CellViewModeling? {
         return self.sections[(indexPath as NSIndexPath).section].cells[(indexPath as NSIndexPath).row]
     }
 }

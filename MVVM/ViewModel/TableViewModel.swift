@@ -28,33 +28,6 @@ open class TableViewModel: NSObject, ItemsViewModeling {
     }
 }
 
-extension TableViewModel: UITableViewDelegate {
-    open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if self.didSelectCell(cellAt(indexPath) as! TableCellViewModeling) {
-            tableView.deselectRow(at: indexPath, animated: true)
-        }
-    }
-    
-    open func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let rowViewModel = cellAt(indexPath) as! TableCellViewModeling
-        return rowViewModel.cellHeight
-    }
-    
-    @objc(tableView:canEditRowAtIndexPath:) open func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return self.canEditCell(cellAt(indexPath) as! TableCellViewModeling)
-    }
-    
-    @objc(tableView:commitEditingStyle:forRowAtIndexPath:) open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        switch editingStyle {
-        case .delete:
-            self.didDeleteCell(cellAt(indexPath) as! TableCellViewModeling)
-        case .insert: break
-            
-        default: break
-        }
-    }
-}
-
 extension TableViewModel: UITableViewDataSource {
     open func numberOfSections(in tableView: UITableView) -> Int {
         return self.sections.count
@@ -65,7 +38,7 @@ extension TableViewModel: UITableViewDataSource {
     }
     
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let rowViewModel = cellAt(indexPath)!
+        let rowViewModel = cellAt(indexPath: indexPath)!
         
         if let nibName = rowViewModel.nibName {
             let nib = UINib.init(nibName: nibName, bundle: Bundle.main)
@@ -87,5 +60,32 @@ extension TableViewModel: UITableViewDataSource {
         }
         
         return UITableViewCell()
+    }
+}
+
+extension TableViewModel: UITableViewDelegate {
+    open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if self.didSelectCell(cellAt(indexPath: indexPath) as! TableCellViewModeling) {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
+    open func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let rowViewModel = cellAt(indexPath: indexPath) as! TableCellViewModeling
+        return rowViewModel.cellHeight
+    }
+    
+    @objc(tableView:canEditRowAtIndexPath:) open func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return self.canEditCell(cellAt(indexPath: indexPath) as! TableCellViewModeling)
+    }
+    
+    @objc(tableView:commitEditingStyle:forRowAtIndexPath:) open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        switch editingStyle {
+        case .delete:
+            self.didDeleteCell(cellAt(indexPath: indexPath) as! TableCellViewModeling)
+        case .insert: break
+            
+        default: break
+        }
     }
 }

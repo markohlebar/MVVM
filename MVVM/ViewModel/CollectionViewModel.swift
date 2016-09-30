@@ -23,3 +23,45 @@ open class CollectionViewModel: NSObject, ItemsViewModeling {
         return false
     }
 }
+
+extension CollectionViewModel: UICollectionViewDataSource {
+    
+    open func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return self.sections.count
+    }
+    
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.sections[section].cells.count
+    }
+    
+    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cellViewModel = cellAt(indexPath: indexPath)!
+        
+        collectionView.register(cellViewModel.viewClass, forCellWithReuseIdentifier: (cellViewModel.cellIdentifier))
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellViewModel.cellIdentifier, for: indexPath) as! ViewModelable
+        
+        cell.refresh(with: cellViewModel)
+        
+        return cell as! UICollectionViewCell
+    }
+}
+
+extension CollectionViewModel: UICollectionViewDelegate {
+    
+    open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if self.didSelectCell(cellAt(indexPath: indexPath) as! CollectionCellViewModeling) {
+            collectionView.deselectItem(at: indexPath, animated: true)
+        }
+    }
+}
+
+extension CollectionViewModel: UICollectionViewDelegateFlowLayout {
+    
+    open func collectionView(_ collectionView: UICollectionView,
+                             layout collectionViewLayout: UICollectionViewLayout,
+                             sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let cell = cellAt(indexPath: indexPath) as! CollectionCellViewModeling
+        return cell.cellSize
+    }
+}
