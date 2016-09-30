@@ -10,78 +10,74 @@ import Foundation
 
 public protocol ViewModelable: class {
     var viewModel: ViewModeling? { get set }
-    var updater: ViewUpdating? { get set }
-    func updateBindings(_ viewModel: ViewModeling)
+    
+    //Call refresh on the viewModelable to rerender with the new view model.
+    func refresh(with viewModel: ViewModeling)
+    
+    //didRefresh is called after refresh. 
+    //Use this to add additional behavior after refresh.
+    func didRefresh(with viewModel: ViewModeling)
+    
+    //didRefresh is called after refresh.
+    //Use this to add additional behavior after refresh.
+    func willRefresh(with viewModel: ViewModeling)
 }
 
 private var ViewModelKey: UInt8 = 0
 private var ViewUpdaterKey: UInt8 = 0
 
 public extension ViewModelable {
+    
+    public func refresh(with viewModel: ViewModeling) {
+        willRefresh(with: viewModel)
+        _refresh(with: viewModel)
+        didRefresh(with: viewModel)
+    }
+    
+    public func willRefresh(with viewModel: ViewModeling) {}
 
-    var viewModel: ViewModeling? {
-        get {
-            let associated: ViewModeling? = getAssociatedObject(self, associativeKey: &ViewModelKey)
-            return associated
-        }
-        set {
-            setAssociatedObject(self, value: newValue, associativeKey: &ViewModelKey, policy: .OBJC_ASSOCIATION_RETAIN)
-        
-            if var viewModel = newValue {
-                viewModel.viewModelable = self
-                
-                updateBindings(viewModel)
-            
-                if let updater = updater {
-                    viewModel.refreshHandler = updater.updateWithViewModel
-                }
-            }
-        }
+    public func didRefresh(with viewModel: ViewModeling) {}
+
+    internal func _refresh(with viewModel: ViewModeling) {
+        self.viewModel = viewModel
+        self.viewModel?.viewModelable = self
     }
-    
-    var updater: ViewUpdating? {
-        get {
-            let associated: ViewUpdating? = getAssociatedObject(self, associativeKey: &ViewUpdaterKey)
-            return associated
-        }
-        set {
-          setAssociatedObject(self, value: newValue, associativeKey: &ViewUpdaterKey, policy: .OBJC_ASSOCIATION_RETAIN)
-            
-            if var viewModel = viewModel {
-                viewModel.refreshHandler = newValue!.updateWithViewModel
-                viewModel.refresh()
-            }
-        }
-    }
-    
-    public func updateBindings(_ viewModel: ViewModeling) {}
 }
 
-public protocol CollectionViewModelable: ViewModelable {
+public protocol ItemsViewModelable: ViewModelable {
     
-    var collectionViewModel: CollectionViewModeling? { get set }
+    var updater: ViewUpdating? { get set }
+    
+    var itemsViewModel: ItemsViewModeling? { get set }
     
     /**
      Implement this behaviour to be able to scroll to cell.
      
      - parameter indexPath: an indexPath to scroll to.
      */
-    func scrollToIndexPath(_ indexPath: IndexPath);
+    func scrollTo(indexPath indexPath: IndexPath);
 }
 
-public extension CollectionViewModelable {
+public extension ItemsViewModelable {
     
-    var collectionViewModel: CollectionViewModeling? {
+    var itemsViewModel: ItemsViewModeling? {
         get {
-            return viewModel as? CollectionViewModeling
+            return viewModel as? ItemsViewModeling
         }
         set {
-            viewModel = newValue
+            viewModel = newValue!
         }
     }
     
-    func cellAt(_ indexPath: IndexPath) -> CellViewModeling? {
-        return collectionViewModel?.sections[(indexPath as NSIndexPath).section].cells[(indexPath as NSIndexPath).row]
+    func cellAt(indexPath indexPath: IndexPath) -> CellViewModeling? {
+        return itemsViewModel?.sections[(indexPath as NSIndexPath).section].cells[(indexPath as NSIndexPath).row]
+    }
+    
+    public func refresh(with viewModel: ViewModeling) {
+        willRefresh(with: viewModel)
+        _refresh(with: viewModel)
+        self.updater?.update(with: viewModel)
+        didRefresh(with: viewModel);
     }
 }
 
@@ -97,42 +93,7 @@ public extension CellViewModelable {
             return viewModel as? CellViewModeling
         }
         set {
-            viewModel = newValue
+            viewModel = newValue!
         }
-    }
-}
-
-// MARK: - Associated object functions
-
-//http://stackoverflow.com/questions/24133058/is-there-a-way-to-set-associated-objects-in-swift
-final class Lifted<T> {
-    let value: T
-    init(_ x: T) {
-        value = x
-    }
-}
-
-private func lift<T>(_ x: T) -> Lifted<T>  {
-    return Lifted(x)
-}
-
-private func setAssociatedObject<T>(_ object: AnyObject, value: T, associativeKey: UnsafeRawPointer, policy: objc_AssociationPolicy) {
-    if let v: AnyObject = value as? AnyObject {
-        objc_setAssociatedObject(object, associativeKey, v,  policy)
-    }
-    else {
-        objc_setAssociatedObject(object, associativeKey, lift(value),  policy)
-    }
-}
-
-private func getAssociatedObject<T>(_ object: AnyObject, associativeKey: UnsafeRawPointer) -> T? {
-    if let v = objc_getAssociatedObject(object, associativeKey) as? T {
-        return v
-    }
-    else if let v = objc_getAssociatedObject(object, associativeKey) as? Lifted<T> {
-        return v.value
-    }
-    else {
-        return nil
     }
 }

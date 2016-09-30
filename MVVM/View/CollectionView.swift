@@ -8,8 +8,11 @@
 
 import UIKit
 
-open class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, CollectionViewModelable {
-        
+open class CollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, ItemsViewModelable {
+    
+    public var viewModel: ViewModeling?
+    public var updater: ViewUpdating?
+    
     public override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         
@@ -25,41 +28,41 @@ open class CollectionView: UICollectionView, UICollectionViewDelegate, UICollect
     }
     
     open func numberOfSections(in collectionView: UICollectionView) -> Int {
-        guard let collectionViewModel = collectionViewModel else {
+        guard let collectionViewModel = itemsViewModel else {
             return 0
         }
         return collectionViewModel.sections.count
     }
     
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let collectionViewModel = collectionViewModel else {
+        guard let collectionViewModel = itemsViewModel else {
             return 0
         }
         return collectionViewModel.sections[section].cells.count
     }
     
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard collectionViewModel != nil else {
+        guard itemsViewModel != nil else {
             return UICollectionViewCell()
         }
         
-        let cellViewModel = cellAt(indexPath)!
+        let cellViewModel = cellAt(indexPath: indexPath)!
         
         collectionView.register(cellViewModel.viewClass, forCellWithReuseIdentifier: (cellViewModel.cellIdentifier))
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellViewModel.cellIdentifier, for: indexPath) as! ViewModelable
         
-        cell.viewModel = cellViewModel
+        cell.refresh(with: cellViewModel)
                 
         return cell as! UICollectionViewCell
     }
     
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let collectionViewModel = collectionViewModel else {
+        guard let collectionViewModel = itemsViewModel else {
             return
         }
         
-        if collectionViewModel.didSelectCell(cellAt(indexPath) as!CollectionCellViewModeling) {
+        if collectionViewModel.didSelectCell(cellAt(indexPath: indexPath) as!CollectionCellViewModeling) {
             collectionView.deselectItem(at: indexPath, animated: true)
         }
     }
@@ -67,11 +70,11 @@ open class CollectionView: UICollectionView, UICollectionViewDelegate, UICollect
     open func collectionView(_ collectionView: UICollectionView,
                           layout collectionViewLayout: UICollectionViewLayout,
                                  sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let cell = cellAt(indexPath) as! CollectionCellViewModeling
+        let cell = cellAt(indexPath: indexPath) as! CollectionCellViewModeling
         return cell.cellSize
     }
     
-    open func scrollToIndexPath(_ indexPath: IndexPath) {
+    open func scrollTo(indexPath indexPath: IndexPath) {
         self.scrollToItem(at: indexPath, at:.top, animated:true)        
     }
 }

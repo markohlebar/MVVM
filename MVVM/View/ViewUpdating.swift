@@ -10,7 +10,7 @@ import UIKit
 
 public protocol ViewUpdating {
     
-    func updateWithViewModel(_ viewModel: ViewModeling)
+    func update(with viewModel: ViewModeling)
 }
 
 public protocol Reloadable {
@@ -30,7 +30,7 @@ open class Reloader: ViewUpdating {
         self.reloadable = reloadable
     }
     
-    open func updateWithViewModel(_ viewModel: ViewModeling) {
+    open func update(with viewModel: ViewModeling) {
         reloadable?.reloadData()
     }
 }
