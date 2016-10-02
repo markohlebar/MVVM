@@ -6,6 +6,8 @@
 //
 //
 
+import CoreGraphics
+
 public protocol CollectionCellViewModeling: CellViewModeling {
     
     var cellSize: CGSize { get }

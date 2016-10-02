@@ -6,6 +6,8 @@
 //
 //
 
+#if os(iOS) || os(tvOS)
+
 import UIKit
 
 open class CollectionViewModel: NSObject, ItemsViewModeling {
@@ -65,3 +67,5 @@ extension CollectionViewModel: UICollectionViewDelegateFlowLayout {
         return cell.cellSize
     }
 }
+
+#endif

@@ -6,6 +6,8 @@
 //  Copyright © 2016 Marko Hlebar. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS)
+    
 import UIKit
 
 open class TableView: UITableView, ItemsViewModelable {
@@ -27,3 +29,5 @@ open class TableView: UITableView, ItemsViewModelable {
         self.scrollToRow(at: indexPath, at:.top, animated:true)
     }
 }
+    
+#endif

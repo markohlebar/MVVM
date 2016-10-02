@@ -6,6 +6,8 @@
 //
 //
 
+#if os(iOS) || os(tvOS)
+    
 import UIKit
 
 open class CollectionView: UICollectionView, ItemsViewModelable {
@@ -27,3 +29,5 @@ open class CollectionView: UICollectionView, ItemsViewModelable {
         self.scrollToItem(at: indexPath, at:.top, animated:true)        
     }
 }
+    
+#endif

@@ -6,6 +6,8 @@
 //
 //
 
+#if os(iOS) || os(tvOS)
+
 import UIKit
 
 /**
@@ -89,3 +91,5 @@ extension TableViewModel: UITableViewDelegate {
         }
     }
 }
+
+#endif

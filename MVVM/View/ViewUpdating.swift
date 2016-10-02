@@ -6,7 +6,14 @@
 //  Copyright © 2016 Marko Hlebar. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS)
 import UIKit
+#endif
+
+#if os(iOS) || os(tvOS)
+extension UITableView: Reloadable {}
+extension UICollectionView: Reloadable {}
+#endif
 
 public protocol ViewUpdating {
     
@@ -17,9 +24,6 @@ public protocol Reloadable {
     
     func reloadData() -> Void
 }
-
-extension UITableView: Reloadable {}
-extension UICollectionView: Reloadable {}
 
 /// Convenience handler to reload the Reloadable view on every change.
 open class Reloader: ViewUpdating {
