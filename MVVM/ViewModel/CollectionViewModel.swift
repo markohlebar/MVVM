@@ -12,6 +12,11 @@ import UIKit
 
 open class CollectionViewModel: NSObject, ItemsViewModeling {
     
+    open var uniqueIdentifier: String {
+        assert(false)
+        return ""
+    }
+    
     public weak var viewModelable: ViewModelable?
     public var sections: [SectionViewModeling]!
     

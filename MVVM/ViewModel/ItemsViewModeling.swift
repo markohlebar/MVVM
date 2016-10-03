@@ -55,6 +55,8 @@ public protocol SectionViewModeling: ViewModeling {
 }
 
 public struct SectionViewModel: SectionViewModeling {
+    public var uniqueIdentifier: String = ""
+
     public var cells: [CellViewModeling]
     public weak var viewModelable: ViewModelable?
     

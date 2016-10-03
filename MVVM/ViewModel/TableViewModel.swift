@@ -16,6 +16,12 @@ import UIKit
  A table view model base class, to be used when modeling a TableView.
  */
 open class TableViewModel: NSObject, ItemsViewModeling {
+    
+    open var uniqueIdentifier: String {
+        assert(false)
+        return ""
+    }
+
     weak public var viewModelable: ViewModelable?
     public var sections: [SectionViewModeling]! = []
     

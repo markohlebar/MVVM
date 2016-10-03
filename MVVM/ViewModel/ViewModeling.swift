@@ -20,12 +20,6 @@ public protocol ViewModeling {
 
 public extension ViewModeling {
     
-    public var uniqueIdentifier: String {
-        //TODO: Throw exception rather than assert? 
-        assert(false, "Override uniqueIdentifier in your ViewModel subclass")
-        return ""
-    }
-    
     public var viewClass: AnyClass? {
         return nil
     }
@@ -39,3 +33,13 @@ public extension ViewModeling {
         self.viewModelable?.refresh(with: self)
     }
 }
+
+//TODO: Is this really the best way to check equality between objects implementing a protocol?
+public func ==(lhs: ViewModeling, rhs: ViewModeling) -> Bool {
+    return lhs.uniqueIdentifier == rhs.uniqueIdentifier
+}
+
+public func !=(lhs: ViewModeling, rhs: ViewModeling) -> Bool {
+    return lhs.uniqueIdentifier != rhs.uniqueIdentifier
+}
+
