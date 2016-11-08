@@ -20,13 +20,13 @@ open class CollectionViewModel: NSObject, ItemsViewModeling {
     public weak var viewModelable: ViewModelable?
     public var sections: [SectionViewModeling]!
     
-    open func didSelect(cell cell: CellViewModeling) -> Bool {
+    open func didSelect(cell: CellViewModeling) -> Bool {
         return true
     }
     
-    open func didDelete(cell cell: CellViewModeling) {}
+    open func didDelete(cell: CellViewModeling) {}
     
-    open func canEdit(cell cell: CellViewModeling) -> Bool {
+    open func canEdit(cell: CellViewModeling) -> Bool {
         return false
     }
 }

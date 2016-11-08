@@ -20,7 +20,7 @@ public protocol ViewUpdating {
     func update(with viewModel: ViewModeling)
 }
 
-public protocol Reloadable {
+public protocol Reloadable: class {
     
     func reloadData() -> Void
 }
@@ -28,7 +28,7 @@ public protocol Reloadable {
 /// Convenience handler to reload the Reloadable view on every change.
 open class Reloader: ViewUpdating {
     
-    open var reloadable: Reloadable?
+    open weak var reloadable: Reloadable?
     
     public init(reloadable: Reloadable?) {
         self.reloadable = reloadable

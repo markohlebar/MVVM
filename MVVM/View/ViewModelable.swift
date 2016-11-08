@@ -59,7 +59,7 @@ public protocol ItemsViewModelable: ViewModelable {
      
      - parameter indexPath: an indexPath to scroll to.
      */
-    func scrollTo(indexPath indexPath: IndexPath);
+    func scrollTo(indexPath: IndexPath);
 }
 
 public extension ItemsViewModelable {
@@ -73,7 +73,7 @@ public extension ItemsViewModelable {
         }
     }
     
-    func cellAt(indexPath indexPath: IndexPath) -> CellViewModeling? {
+    func cellAt(indexPath: IndexPath) -> CellViewModeling? {
         return itemsViewModel?.sections[(indexPath as NSIndexPath).section].cells[(indexPath as NSIndexPath).row]
     }
     

@@ -20,14 +20,14 @@ public protocol ItemsViewModeling: ViewModeling {
      
      - returns: should it deselect animated?
      */
-    func didSelect(cell cell: CellViewModeling) -> Bool
+    func didSelect(cell: CellViewModeling) -> Bool
     
     /**
      Invoked when a cell is deleted.
      
      - parameter cell: a cell view model for the cell that was deleted.
      */
-    func didDelete(cell cell: CellViewModeling)
+    func didDelete(cell: CellViewModeling)
     
     /**
      Invoked when a cell is asked to be edited.
@@ -36,30 +36,51 @@ public protocol ItemsViewModeling: ViewModeling {
      
      - returns: can it be edited?
      */
-    func canEdit(cell cell: CellViewModeling) -> Bool
+    func canEdit(cell: CellViewModeling) -> Bool
     
     
-    func cellAt(indexPath indexPath: IndexPath) -> CellViewModeling?
+    func cellAt(indexPath: IndexPath) -> CellViewModeling?
+}
+
+//TableViewModeling adds
+public protocol TableViewModeling: ItemsViewModeling {
+
+    //Describes the Table View Header
+    var header: ViewModeling? { get set }
 }
 
 public extension ItemsViewModeling {
     
-    func cellAt(indexPath indexPath: IndexPath) -> CellViewModeling? {
+    public func cellAt(indexPath: IndexPath) -> CellViewModeling? {
         return self.sections[(indexPath as NSIndexPath).section].cells[(indexPath as NSIndexPath).row]
+    }
+    
+    public func cells(inSection section:Int) -> [CellViewModeling] {
+        guard let sections = self.sections,
+                sections.count > section else {
+            return [CellViewModeling]()
+        }
+        
+        return self.sections[section].cells
     }
 }
 
 public protocol SectionViewModeling: ViewModeling {
     
     var cells: [CellViewModeling] { get set }
+    var header: CellViewModeling? { get set }
+    var footer: CellViewModeling? { get set }
 }
 
 public struct SectionViewModel: SectionViewModeling {
     public var uniqueIdentifier: String = ""
 
     public var cells: [CellViewModeling]
+    public var header: CellViewModeling?
+    public var footer: CellViewModeling?
+
     public weak var viewModelable: ViewModelable?
-    
+
     public init(cells: [CellViewModeling]) {
         self.cells = cells
     }

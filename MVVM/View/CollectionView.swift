@@ -25,7 +25,7 @@ open class CollectionView: UICollectionView, ItemsViewModelable {
         }
     }
     
-    open func scrollTo(indexPath indexPath: IndexPath) {
+    open func scrollTo(indexPath: IndexPath) {
         self.scrollToItem(at: indexPath, at:.top, animated:true)        
     }
 }
