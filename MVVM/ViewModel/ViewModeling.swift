@@ -30,16 +30,29 @@ public extension ViewModeling {
     }
     
     public func refresh() {
-        self.viewModelable?.refresh(with: self)
+        viewModelable?.refresh(with: self)
+    }
+
+    public var hashValue: Int {
+        return uniqueIdentifier.hashValue
     }
 }
 
 //TODO: Is this really the best way to check equality between objects implementing a protocol?
-public func ==(lhs: ViewModeling, rhs: ViewModeling) -> Bool {
+public func == (lhs: ViewModeling, rhs: ViewModeling) -> Bool {
     return lhs.uniqueIdentifier == rhs.uniqueIdentifier
 }
 
-public func !=(lhs: ViewModeling, rhs: ViewModeling) -> Bool {
-    return lhs.uniqueIdentifier != rhs.uniqueIdentifier
-}
+public func == (lhs: [ViewModeling], rhs: [ViewModeling]) -> Bool {
+    guard lhs.count == rhs.count else {
+        return false
+    }
 
+    for i in 0 ..< lhs.count {
+        guard lhs[i].hashValue == rhs[i].hashValue else {
+            return false
+        }
+    }
+
+    return true
+}

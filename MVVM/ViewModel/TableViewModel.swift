@@ -16,15 +16,11 @@ import UIKit
  A table view model base class, to be used when modeling a TableView.
  */
 open class TableViewModel: NSObject, TableViewModeling, NSCopying {
-    
-    open var uniqueIdentifier: String {
-        assert(false)
-        return ""
-    }
 
     weak public var viewModelable: ViewModelable?
     public var sections: [SectionViewModeling]! = []
     public var header: ViewModeling?
+    public var uniqueIdentifier: String
 
     open func didSelect(cell: CellViewModeling) -> Bool {
         return true
@@ -36,12 +32,17 @@ open class TableViewModel: NSObject, TableViewModeling, NSCopying {
         return false
     }
 
-    public func copy(with zone: NSZone? = nil) -> Any {
-        let viewModel = TableViewModel()
+    open func copy(with zone: NSZone? = nil) -> Any {
+        let viewModel = type(of: self).init()
         viewModel.viewModelable = viewModelable
         viewModel.sections = sections
         viewModel.header = header
         return viewModel
+    }
+
+    public required override init() {
+        uniqueIdentifier = ""
+        super.init()
     }
 }
 

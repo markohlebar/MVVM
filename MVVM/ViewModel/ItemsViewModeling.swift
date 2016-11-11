@@ -49,6 +49,12 @@ public protocol TableViewModeling: ItemsViewModeling {
     var header: ViewModeling? { get set }
 }
 
+public func == (lhs: TableViewModeling, rhs: TableViewModeling) -> Bool {
+    //TODO: - add header into equality check
+    return lhs.uniqueIdentifier == rhs.uniqueIdentifier &&
+        lhs.sections == rhs.sections
+}
+
 public extension ItemsViewModeling {
     
     public func cellAt(indexPath: IndexPath) -> CellViewModeling? {
@@ -65,11 +71,22 @@ public extension ItemsViewModeling {
     }
 }
 
+public func == (lhs: ItemsViewModeling, rhs: ItemsViewModeling) -> Bool {
+    //TODO: - Add header and footer into equality check
+    return lhs.uniqueIdentifier == rhs.uniqueIdentifier &&
+        lhs.sections == rhs.sections}
+
 public protocol SectionViewModeling: ViewModeling {
     
     var cells: [CellViewModeling] { get set }
     var header: CellViewModeling? { get set }
     var footer: CellViewModeling? { get set }
+}
+
+public func == (lhs: SectionViewModeling, rhs: SectionViewModeling) -> Bool {
+
+    return lhs.uniqueIdentifier == rhs.uniqueIdentifier &&
+        lhs.cells == rhs.cells
 }
 
 public struct SectionViewModel: SectionViewModeling {
@@ -103,5 +120,25 @@ public extension CellViewModeling {
         
         //TODO: Throw exception here?
         return ""
+    }
+}
+
+// MARK - Equalities 
+
+extension Array where Element: ViewModeling {
+
+    static func == (lhs: [ViewModeling], rhs: [ViewModeling]) -> Bool {
+        let lhsHashes = lhs.map { return $0.hashValue }
+        let rhsHashes = rhs.map { return $0.hashValue }
+        return lhsHashes == rhsHashes
+    }
+}
+
+extension Array where Element: SectionViewModeling {
+
+    static func == (lhs: [SectionViewModeling], rhs: [SectionViewModeling]) -> Bool {
+        let lhsIdentifiers = lhs.map { $0.uniqueIdentifier }
+        let rhsIdentifiers = rhs.map { $0.uniqueIdentifier }
+        return lhsIdentifiers == rhsIdentifiers
     }
 }
