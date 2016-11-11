@@ -35,6 +35,7 @@ open class TableView: UITableView, ItemsViewModelable {
     public func willRefresh(with viewModel: ViewModeling) {
         guard viewModel is TableViewModel else {
             assert(false, "Can't assign a view model that is not a TableViewModel")
+            return
         }
 
         let tableViewModel = viewModel as! TableViewModel
