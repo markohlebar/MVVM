@@ -10,8 +10,15 @@
 
 import UIKit
 
-open class CollectionViewModel: NSObject, ItemsViewModeling {
-    
+    open class CollectionViewModel: NSObject, ItemsViewModeling {
+        /**
+         Invoked when a cell is asked to be moved.
+         
+         - parameter cell:  cell view model for the cell that needs to be moved.
+         
+         - returns: can it be moved?
+         */
+
     open var uniqueIdentifier: String {
         assert(false)
         return ""
@@ -27,6 +34,10 @@ open class CollectionViewModel: NSObject, ItemsViewModeling {
     open func didDelete(cell: CellViewModeling) {}
     
     open func canEdit(cell: CellViewModeling) -> Bool {
+        return false
+    }
+
+    public func canMove(cell: CellViewModeling) -> Bool {
         return false
     }
 }

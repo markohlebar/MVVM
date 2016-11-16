@@ -37,7 +37,16 @@ public protocol ItemsViewModeling: ViewModeling {
      - returns: can it be edited?
      */
     func canEdit(cell: CellViewModeling) -> Bool
-    
+
+    /**
+     Invoked when a cell is asked to be moved.
+
+     - parameter cell:  cell view model for the cell that needs to be moved.
+
+     - returns: can it be moved?
+     */
+    func canMove(cell: CellViewModeling) -> Bool
+
     
     func cellAt(indexPath: IndexPath) -> CellViewModeling?
 }

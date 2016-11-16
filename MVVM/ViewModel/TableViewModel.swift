@@ -32,12 +32,29 @@ open class TableViewModel: NSObject, TableViewModeling, NSCopying {
         return false
     }
 
+    open func canMove(cell: CellViewModeling) -> Bool {
+        return false
+    }
+
     open func copy(with zone: NSZone? = nil) -> Any {
         let viewModel = type(of: self).init()
         viewModel.viewModelable = viewModelable
         viewModel.sections = sections
         viewModel.header = header
         return viewModel
+    }
+
+    open func move(cellAt indexPath: IndexPath, to destinationIndexPath:IndexPath) {
+        let section = sections[indexPath.section]
+        var allCells = section.cells
+
+        guard let cell = cellAt(indexPath: indexPath) else { return }
+        allCells.remove(at: indexPath.row)
+        allCells.insert(cell, at: destinationIndexPath.row)
+
+        //TODO: this might be problematic if someone inherits from SectionViewModel?
+        let newSection = SectionViewModel(cells: allCells)
+        sections[indexPath.section] = newSection
     }
 
     public required override init() {
@@ -120,6 +137,18 @@ extension TableViewModel: UITableViewDataSource {
 
         return header.cellHeight
     }
+
+    open func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return canMove(cell: cellAt(indexPath: indexPath) as! TableCellViewModeling)
+    }
+
+    open func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        move(cellAt:sourceIndexPath, to:destinationIndexPath)
+    }
+
+    @objc(tableView:canEditRowAtIndexPath:) open func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return canEdit(cell: cellAt(indexPath: indexPath) as! TableCellViewModeling)
+    }
 }
 
 extension TableViewModel: UITableViewDelegate {
@@ -133,11 +162,7 @@ extension TableViewModel: UITableViewDelegate {
         let rowViewModel = cellAt(indexPath: indexPath) as! TableCellViewModeling
         return rowViewModel.cellHeight
     }
-    
-    @objc(tableView:canEditRowAtIndexPath:) open func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return self.canEdit(cell: cellAt(indexPath: indexPath) as! TableCellViewModeling)
-    }
-    
+
     @objc(tableView:commitEditingStyle:forRowAtIndexPath:) open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
         case .delete:
