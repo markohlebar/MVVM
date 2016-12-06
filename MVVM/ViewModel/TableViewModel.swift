@@ -99,32 +99,44 @@ extension TableViewModel: UITableViewDataSource {
 
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let sectionViewModel = sections[section]
-
         guard let header = sectionViewModel.header else {
             return nil
         }
 
-        if let nibName = header.nibName {
-            let nib = UINib.init(nibName: nibName, bundle: Bundle.main)
-            tableView.register(nib, forHeaderFooterViewReuseIdentifier: header.cellIdentifier)
+        return view(forHeaderFooter: header, in: tableView)
+    }
+
+    open func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let sectionViewModel = sections[section]
+        guard let footer = sectionViewModel.footer else {
+            return nil
         }
-        else if let viewClass = header.viewClass {
-            tableView.register(viewClass, forHeaderFooterViewReuseIdentifier: header.cellIdentifier)
+
+        return view(forHeaderFooter: footer, in: tableView)
+    }
+
+    private func view(forHeaderFooter headerFooterViewModel: CellViewModeling, in tableView: UITableView) -> UIView? {
+        if let nibName = headerFooterViewModel.nibName {
+            let nib = UINib.init(nibName: nibName, bundle: Bundle.main)
+            tableView.register(nib, forHeaderFooterViewReuseIdentifier: headerFooterViewModel.cellIdentifier)
+        }
+        else if let viewClass = headerFooterViewModel.viewClass {
+            tableView.register(viewClass, forHeaderFooterViewReuseIdentifier: headerFooterViewModel.cellIdentifier)
         }
         else {
             //TODO: throw exception with MVVM domain
         }
 
-        if let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: header.cellIdentifier) as? ViewModelable{
-            view.refresh(with: header)
+        if let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: headerFooterViewModel.cellIdentifier) as? ViewModelable{
+            view.refresh(with: headerFooterViewModel)
 
             let uiView = view as! UIView
             return uiView
         }
         else {
-            assert(false, "The header view is not view modelable; Make sure the header view implements ViewModelable protocol.")
+            assert(false, "The header / footer view is not view modelable; Make sure the header view implements ViewModelable protocol.")
         }
-
+        
         return nil
     }
 
@@ -132,6 +144,16 @@ extension TableViewModel: UITableViewDataSource {
         let sectionViewModel = sections[section]
 
         guard let header = sectionViewModel.header as? TableCellViewModeling else {
+            return 0
+        }
+
+        return header.cellHeight
+    }
+
+    open func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        let sectionViewModel = sections[section]
+
+        guard let header = sectionViewModel.footer as? TableCellViewModeling else {
             return 0
         }
 
