@@ -44,17 +44,20 @@ open class TableViewModel: NSObject, TableViewModeling, NSCopying {
         return viewModel
     }
 
-    open func move(cellAt indexPath: IndexPath, to destinationIndexPath:IndexPath) {
+    //Returns false if for some reason a cell cannot be moved to destinationIndexPath
+    open func move(cellAt indexPath: IndexPath, to destinationIndexPath:IndexPath) -> Bool {
         let section = sections[indexPath.section]
         var allCells = section.cells
 
-        guard let cell = cellAt(indexPath: indexPath) else { return }
+        guard let cell = cellAt(indexPath: indexPath) else { return false }
         allCells.remove(at: indexPath.row)
         allCells.insert(cell, at: destinationIndexPath.row)
 
         //TODO: this might be problematic if someone inherits from SectionViewModel?
         let newSection = SectionViewModel(cells: allCells)
         sections[indexPath.section] = newSection
+
+        return true
     }
 
     public required override init() {
@@ -165,7 +168,12 @@ extension TableViewModel: UITableViewDataSource {
     }
 
     open func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        move(cellAt:sourceIndexPath, to:destinationIndexPath)
+        if !move(cellAt:sourceIndexPath, to:destinationIndexPath) {
+
+            DispatchQueue.main.async {
+                tableView.moveRow(at: destinationIndexPath, to: sourceIndexPath)
+            }
+        }
     }
 
     @objc(tableView:canEditRowAtIndexPath:) open func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
