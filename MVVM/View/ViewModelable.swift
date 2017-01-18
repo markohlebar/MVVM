@@ -29,6 +29,11 @@ private var ViewUpdaterKey: UInt8 = 0
 public extension ViewModelable {
     
     public func refresh(with viewModel: ViewModeling) {
+        if let oldViewModel = self.viewModel,
+            oldViewModel == viewModel {
+            return
+        }
+
         willRefresh(with: viewModel)
         _refresh(with: viewModel)
         didRefresh(with: viewModel)
@@ -39,10 +44,6 @@ public extension ViewModelable {
     public func didRefresh(with viewModel: ViewModeling) {}
 
     internal func _refresh(with viewModel: ViewModeling) {
-        if (self.viewModel != nil && self.viewModel! == viewModel) {
-            return
-        }
-        
         self.viewModel = viewModel
         self.viewModel?.viewModelable = self
     }
