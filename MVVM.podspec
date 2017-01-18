@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = 'MVVM'
-  spec.version      = '0.1.4'
+  spec.version      = '0.1.5'
   spec.homepage 	= 'https://github.com/markohlebar/BIND'
   spec.license      = { :type => 'MIT' }
   spec.authors      = { 'Marko Hlebar' => 'marko.hlebar@gmail.com' }
