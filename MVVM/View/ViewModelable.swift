@@ -10,11 +10,15 @@ import Foundation
 
 public protocol ViewModelable: class {
     var viewModel: ViewModeling? { get set }
-    
+
+    //Call refresh on the viewModelable to rerender with the new view model.
+    //Bypassing equality check will rerender the model by not checking if the same view model is already rendered.
+    func refresh(with viewModel: ViewModeling, bypassingEqualityCheck: Bool)
+
     //Call refresh on the viewModelable to rerender with the new view model.
     func refresh(with viewModel: ViewModeling)
-    
-    //didRefresh is called after refresh. 
+
+    //didRefresh is called after refresh.
     //Use this to add additional behavior after refresh.
     func didRefresh(with viewModel: ViewModeling)
     
@@ -27,9 +31,15 @@ private var ViewModelKey: UInt8 = 0
 private var ViewUpdaterKey: UInt8 = 0
 
 public extension ViewModelable {
-    
+
     public func refresh(with viewModel: ViewModeling) {
-        if let oldViewModel = self.viewModel,
+        refresh(with: viewModel, bypassingEqualityCheck: false)
+    }
+
+    //For some reason defining bypassingEqualityCheck = false as a default parameter doesn't work, 
+    //hence 2 functions are exposed instead.
+    public func refresh(with viewModel: ViewModeling, bypassingEqualityCheck: Bool) {
+        if !bypassingEqualityCheck, let oldViewModel = self.viewModel,
             oldViewModel == viewModel {
             return
         }
@@ -43,6 +53,7 @@ public extension ViewModelable {
 
     public func didRefresh(with viewModel: ViewModeling) {}
 
+    //Can't extend internal functions!
     internal func _refresh(with viewModel: ViewModeling) {
         self.viewModel = viewModel
         self.viewModel?.viewModelable = self
@@ -73,16 +84,16 @@ public extension ItemsViewModelable {
             viewModel = newValue!
         }
     }
+
+    public func refresh(with viewModel: ViewModeling, bypassingEqualityCheck: Bool) {
+        willRefresh(with: viewModel)
+        _refresh(with: viewModel)
+        updater?.update(with: viewModel)
+        didRefresh(with: viewModel)
+    }
     
     func cellAt(indexPath: IndexPath) -> CellViewModeling? {
         return itemsViewModel?.sections[(indexPath as NSIndexPath).section].cells[(indexPath as NSIndexPath).row]
-    }
-    
-    public func refresh(with viewModel: ViewModeling) {
-        willRefresh(with: viewModel)
-        _refresh(with: viewModel)
-        self.updater?.update(with: viewModel)
-        didRefresh(with: viewModel);
     }
 }
 
